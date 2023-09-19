@@ -8,4 +8,4 @@
  * Copyright (c) 2023 Lvmin Zhang and Maneesh Agrawala
 '''
 
-save_memory = False
+save_memory = True
