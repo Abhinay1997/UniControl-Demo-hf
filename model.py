@@ -457,6 +457,8 @@ class ControlLDM(LatentDiffusion):
         else:
             control = self.control_model(x=x_noisy, hint=torch.cat(cond['c_concat'], 1), timesteps=t, context=cond_txt, task=task_name)
             control = [c * scale for c, scale in zip(control, self.control_scales)]
+            print("control res shape", control.shape)
+            print("control res", control)
             eps = diffusion_model(x=x_noisy, timesteps=t, context=cond_txt, control=control, only_mid_control=self.only_mid_control)
 
         return eps
