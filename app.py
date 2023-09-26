@@ -137,7 +137,7 @@ def process_canny(input_image, prompt, a_prompt, n_prompt, num_samples, image_re
         task_instruction = name_to_instruction[task_dic['name']]
         task_dic['feature'] = model.get_learned_conditioning(task_instruction)[:, :1, :]
 
-        print(f"task instruction before CLIP embedding: {task_to_instruction}")
+        print(f"task instruction before CLIP embedding: {task_instruction}")
         print(f"task embedding: {task_dic['feature']}")
         cond = {"c_concat": [control],
                 "c_crossattn": [model.get_learned_conditioning([prompt + ', ' + a_prompt] * num_samples)],
@@ -1359,4 +1359,4 @@ with demo:
     - https://huggingface.co/spaces/hysts/ControlNet
     - https://huggingface.co/spaces/shi-labs/Prompt-Free-Diffusion
     ''')
-demo.launch()
+demo.launch(share=True)
