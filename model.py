@@ -368,19 +368,19 @@ class ControlNet(nn.Module):
 
         t_emb = timestep_embedding(timesteps, self.model_channels, repeat_only=False)
         emb = self.time_embed(t_emb)
-        print("hint received:", hint)
+        # print("hint received:", hint)
         guided_hint = self.input_hint_block_list_moe[task_id](hint, emb, context)
-        print('guided hint after passing block list moe', guided_hint)
+        # print('guided hint after passing block list moe', guided_hint)
         guided_hint = modulated_conv2d(guided_hint, self.input_hint_block_zeroconv_0[0].weight, self.task_id_layernet_zeroconv_0(task_id_emb).repeat(BS_Real, 1).detach(), padding=1)
-        print('guided hint after first modconv', guided_hint)
+        # print('guided hint after first modconv', guided_hint)
         guided_hint += self.input_hint_block_zeroconv_0[0].bias.unsqueeze(0).unsqueeze(2).unsqueeze(3)
-        print('guided hint after first bias add', guided_hint)
+        # print('guided hint after first bias add', guided_hint)
         guided_hint = self.input_hint_block_share(guided_hint, emb, context)
-        print('guided hint after block_list_share', guided_hint)
+        # print('guided hint after block_list_share', guided_hint)
         guided_hint = modulated_conv2d(guided_hint, self.input_hint_block_zeroconv_1[0].weight, self.task_id_layernet_zeroconv_1(task_id_emb).repeat(BS_Real, 1).detach(), padding=1)
-        print('guided hint after second modconv', guided_hint)
+        # print('guided hint after second modconv', guided_hint)
         guided_hint += self.input_hint_block_zeroconv_1[0].bias.unsqueeze(0).unsqueeze(2).unsqueeze(3)
-        print('guided hint after second bias add', guided_hint)
+        # print('guided hint after second bias add', guided_hint)
         outs = []
         h = x.type(self.dtype)
         for module, zero_conv, task_hyperlayer in zip(self.input_blocks, self.zero_convs, self.task_id_layernet):
@@ -393,12 +393,11 @@ class ControlNet(nn.Module):
                 guided_hint = None
             else:
                 h = module(h, emb, context)
-
+        
             outs.append(modulated_conv2d(h, zero_conv[0].weight, task_hyperlayer(task_id_emb).repeat(BS_Real, 1).detach()) + zero_conv[0].bias.unsqueeze(0).unsqueeze(2).unsqueeze(3))
-
         h = self.middle_block(h, emb, context)
         outs.append(self.middle_block_out(h, emb, context))
-
+        print("down block res outputs and midblock res:", outs)
         return outs
 
 
