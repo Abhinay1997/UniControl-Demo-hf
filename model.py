@@ -368,7 +368,7 @@ class ControlNet(nn.Module):
 
         t_emb = timestep_embedding(timesteps, self.model_channels, repeat_only=False)
         emb = self.time_embed(t_emb)
-        
+        print("hint received:", hint)
         guided_hint = self.input_hint_block_list_moe[task_id](hint, emb, context)
         print('guided hint after passing block list moe', guided_hint)
         guided_hint = modulated_conv2d(guided_hint, self.input_hint_block_zeroconv_0[0].weight, self.task_id_layernet_zeroconv_0(task_id_emb).repeat(BS_Real, 1).detach(), padding=1)
